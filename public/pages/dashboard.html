@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | Sruthi Apartment Maintenance System</title>
+  
+  <!-- Google Fonts & Font Awesome 6 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- App Stylesheets -->
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/forms.css">
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- ================= Sidebar Navigation ================= -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="/pages/dashboard.html" class="brand-logo">
+          <div class="brand-icon-box">
+            <i class="fa-solid fa-building-shield"></i>
+          </div>
+          <div class="brand-text">
+            <span class="brand-title">Sruthi Apartment</span>
+            <span class="brand-subtitle">Maintenance System</span>
+          </div>
+        </a>
+        <button class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Close sidebar">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <nav class="sidebar-menu">
+        <span class="menu-category">Main Overview</span>
+        <a href="/pages/dashboard.html" class="nav-link active">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>Dashboard</span>
+        </a>
+
+        <span class="menu-category">Facilities & People</span>
+        <a href="/pages/residents.html" class="nav-link">
+          <i class="fa-solid fa-users"></i>
+          <span>Residents</span>
+        </a>
+        <a href="/pages/staff.html" class="nav-link">
+          <i class="fa-solid fa-user-gear"></i>
+          <span>Maintenance Staff</span>
+        </a>
+
+        <span class="menu-category">Operations & Repairs</span>
+        <a href="/pages/requests.html" class="nav-link">
+          <i class="fa-solid fa-clipboard-list"></i>
+          <span>Maintenance Requests</span>
+          <span class="nav-badge" id="sidebarPendingBadge">...</span>
+        </a>
+        <a href="/pages/records.html" class="nav-link">
+          <i class="fa-solid fa-screwdriver-wrench"></i>
+          <span>Maintenance Records</span>
+        </a>
+
+        <span class="menu-category">Analytics & Exports</span>
+        <a href="/pages/reports.html" class="nav-link">
+          <i class="fa-solid fa-chart-column"></i>
+          <span>Reports & Analytics</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-snippet">
+          <div class="user-avatar user-avatar-display">SA</div>
+          <div class="user-info">
+            <div class="user-name user-name-display">Administrator</div>
+            <div class="user-role user-role-display">Super Admin</div>
+          </div>
+          <button class="logout-icon-btn btn-logout-trigger" title="Sign Out">
+            <i class="fa-solid fa-power-off"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ================= Main Content Area ================= -->
+    <div class="main-wrapper">
+      <!-- Top Sticky Navigation Bar -->
+      <header class="top-navbar">
+        <div class="header-left">
+          <button class="mobile-toggle" id="mobileToggleBtn" aria-label="Open navigation menu">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="page-breadcrumb">
+            <h1 class="page-title">Executive Dashboard</h1>
+            <span class="page-subtitle">Real-time overview of maintenance tasks and facility expenditures</span>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <span class="badge-tag">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>System Live</span>
+          </span>
+          <button class="btn btn-secondary btn-sm" onclick="fetchDashboardData()" title="Refresh data">
+            <i class="fa-solid fa-arrows-rotate"></i>
+            <span>Refresh</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Page Content -->
+      <main class="page-content">
+
+        <!-- Quick Actions Ribbon -->
+        <section class="quick-actions-bar">
+          <div class="quick-actions-info">
+            <div class="quick-actions-icon">
+              <i class="fa-solid fa-bolt"></i>
+            </div>
+            <div class="quick-actions-text">
+              <h3>Fast Operations Toolbar</h3>
+              <p>Quick shortcuts for everyday facility administration tasks</p>
+            </div>
+          </div>
+          <div class="quick-action-buttons">
+            <a href="/pages/requests.html?action=new" class="btn-quick">
+              <i class="fa-solid fa-plus-circle"></i>
+              <span>+ New Request</span>
+            </a>
+            <a href="/pages/residents.html?action=new" class="btn-quick">
+              <i class="fa-solid fa-user-plus"></i>
+              <span>+ Add Resident</span>
+            </a>
+            <a href="/pages/staff.html?action=new" class="btn-quick">
+              <i class="fa-solid fa-user-gear"></i>
+              <span>+ Add Staff</span>
+            </a>
+            <a href="/pages/records.html?action=new" class="btn-quick">
+              <i class="fa-solid fa-file-invoice-dollar"></i>
+              <span>+ Add Repair Record</span>
+            </a>
+          </div>
+        </section>
+
+        <!-- Dynamic Statistics KPI Grid -->
+        <section class="stats-grid">
+          <!-- 1. Total Residents -->
+          <div class="stat-card primary">
+            <div class="stat-details">
+              <span class="stat-label">Total Residents</span>
+              <span class="stat-value" id="kpiTotalResidents">0</span>
+              <span class="stat-subtext"><i class="fa-solid fa-house"></i> Across all apartment flats</span>
+            </div>
+            <div class="stat-icon-wrap primary">
+              <i class="fa-solid fa-users"></i>
+            </div>
+          </div>
+
+          <!-- 2. Total Maintenance Staff -->
+          <div class="stat-card navy">
+            <div class="stat-details">
+              <span class="stat-label">Maintenance Staff</span>
+              <span class="stat-value" id="kpiTotalStaff">0</span>
+              <span class="stat-subtext"><i class="fa-solid fa-briefcase"></i> Certified technicians</span>
+            </div>
+            <div class="stat-icon-wrap navy">
+              <i class="fa-solid fa-user-gear"></i>
+            </div>
+          </div>
+
+          <!-- 3. Total Maintenance Requests -->
+          <div class="stat-card purple">
+            <div class="stat-details">
+              <span class="stat-label">Total Requests</span>
+              <span class="stat-value" id="kpiTotalRequests">0</span>
+              <span class="stat-subtext"><i class="fa-solid fa-list-check"></i> Lifetime registered complaints</span>
+            </div>
+            <div class="stat-icon-wrap purple">
+              <i class="fa-solid fa-clipboard-list"></i>
+            </div>
+          </div>
+
+          <!-- 4. Pending Requests -->
+          <div class="stat-card warning">
+            <div class="stat-details">
+              <span class="stat-label">Pending Requests</span>
+              <span class="stat-value" id="kpiPendingRequests">0</span>
+              <span class="stat-subtext"><i class="fa-solid fa-clock"></i> Awaiting technician assignment</span>
+            </div>
+            <div class="stat-icon-wrap warning">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+          </div>
+
+          <!-- 5. In Progress Requests -->
+          <div class="stat-card purple">
+            <div class="stat-details">
+              <span class="stat-label">In Progress</span>
+              <span class="stat-value" id="kpiInProgressRequests">0</span>
+              <span class="stat-subtext"><i class="fa-solid fa-wrench"></i> Actively under repair</span>
+            </div>
+            <div class="stat-icon-wrap purple">
+              <i class="fa-solid fa-gear fa-spin" style="--fa-animation-duration: 8s;"></i>
+            </div>
+          </div>
+
+          <!-- 6. Completed Requests -->
+          <div class="stat-card success">
+            <div class="stat-details">
+              <span class="stat-label">Completed Requests</span>
+              <span class="stat-value" id="kpiCompletedRequests">0</span>
+              <span class="stat-subtext"><i class="fa-solid fa-circle-check"></i> Fixed and resolved</span>
+            </div>
+            <div class="stat-icon-wrap success">
+              <i class="fa-solid fa-check-double"></i>
+            </div>
+          </div>
+
+          <!-- 7. Total Repair Costs -->
+          <div class="stat-card emerald">
+            <div class="stat-details">
+              <span class="stat-label">Total Repair Costs</span>
+              <span class="stat-value" id="kpiTotalRepairCosts">₹0.00</span>
+              <span class="stat-subtext"><i class="fa-solid fa-receipt"></i> Total maintenance expenditures</span>
+            </div>
+            <div class="stat-icon-wrap emerald">
+              <i class="fa-solid fa-indian-rupee-sign"></i>
+            </div>
+          </div>
+        </section>
+
+        <!-- Charts Section -->
+        <section class="charts-grid">
+          <!-- Maintenance Requests Overview Chart -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <div>
+                <h3 class="chart-title">
+                  <i class="fa-solid fa-chart-line"></i>
+                  <span>Maintenance Requests Overview</span>
+                </h3>
+                <span class="chart-subtitle">Monthly request volume and completion velocity</span>
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="overviewChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Request Categories Chart -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <div>
+                <h3 class="chart-title">
+                  <i class="fa-solid fa-chart-pie"></i>
+                  <span>Complaints by Category</span>
+                </h3>
+                <span class="chart-subtitle">Distribution across plumbing, electrical, lifts, etc.</span>
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="categoriesChart"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <!-- Recent Maintenance Requests Table -->
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <span>Recent Maintenance Requests</span>
+              </h2>
+              <span class="card-subtitle">Latest maintenance complaints submitted by apartment residents</span>
+            </div>
+            <a href="/pages/requests.html" class="btn btn-secondary btn-sm">
+              <span>View All Requests</span>
+              <i class="fa-solid fa-arrow-right"></i>
+            </a>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Req ID</th>
+                  <th>Resident & Flat</th>
+                  <th>Issue Category</th>
+                  <th>Description</th>
+                  <th>Assigned Staff</th>
+                  <th>Request Date</th>
+                  <th>Status</th>
+                  <th style="text-align: right;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="recentRequestsTableBody">
+                <tr>
+                  <td colspan="8" class="empty-state">
+                    <i class="fa-solid fa-circle-notch fa-spin empty-icon" style="font-size: 1.8rem;"></i>
+                    <div class="empty-desc">Loading live maintenance requests from database...</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+      </main>
+
+      <!-- App Footer -->
+      <footer class="app-footer">
+        <div>&copy; 2026 Sruthi Apartment Maintenance Request Management System. All rights reserved.</div>
+        <div>Designed with Navy Blue & Teal theme &bull; Powered by Express.js & MySQL 8.0</div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Shared Utility Scripts -->
+  <script src="/js/common.js"></script>
+  <!-- Page Specific Script -->
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>

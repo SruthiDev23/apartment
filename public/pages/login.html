@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Sruthi Apartment Maintenance System</title>
+  <!-- Google Fonts & Font Awesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- App Stylesheets -->
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/forms.css">
+</head>
+<body class="login-body">
+
+  <div class="login-card">
+    <!-- Left Branding Showcase Panel -->
+    <div class="login-branding-panel">
+      <div class="login-brand-header">
+        <div class="login-brand-logo">
+          <i class="fa-solid fa-building-shield"></i>
+        </div>
+        <div class="login-brand-info">
+          <h2>Sruthi Apartment</h2>
+          <span>Maintenance Suite</span>
+        </div>
+      </div>
+
+      <div class="login-branding-body">
+        <h1 class="login-heading">Residential Care & Facility Maintenance System</h1>
+        <p class="login-description">
+          Streamlining repair workflows, maintenance staff assignments, and expense tracking across all apartment towers with precision and ease.
+        </p>
+
+        <div class="login-features-list">
+          <div class="login-feature-item">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>Real-time Maintenance Request Pipeline</span>
+          </div>
+          <div class="login-feature-item">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>Technician Specialization & Task Assignment</span>
+          </div>
+          <div class="login-feature-item">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>Live Expense Auditing & Dynamic Analytics</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="login-branding-footer">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>Secure 256-bit Encrypted Management Portal</span>
+      </div>
+    </div>
+
+    <!-- Right Login Form Panel -->
+    <div class="login-form-panel">
+      <div class="form-header">
+        <h3>Staff & Admin Sign In</h3>
+        <p>Enter your authorized credentials to access the dashboard</p>
+      </div>
+
+      <!-- Quick Demo Credentials Box -->
+      <div class="demo-credentials-box">
+        <div class="demo-creds-text">
+          <div><i class="fa-solid fa-key" style="margin-right: 4px;"></i> <strong>Demo Login:</strong> admin@sruthi.com</div>
+          <div>Password: <strong>admin123</strong></div>
+        </div>
+        <button type="button" class="btn-autofill" id="autofillDemoBtn">
+          <i class="fa-solid fa-bolt"></i> Auto-fill
+        </button>
+      </div>
+
+      <form id="loginForm" novalidate>
+        <!-- Email Field -->
+        <div class="form-group">
+          <label class="form-label" for="loginEmail">
+            <span>Work Email or Username</span>
+            <span class="required">*</span>
+          </label>
+          <div class="search-box">
+            <i class="fa-solid fa-envelope search-icon"></i>
+            <input 
+              type="text" 
+              id="loginEmail" 
+              class="form-control" 
+              style="padding-left: 2.4rem;" 
+              placeholder="e.g. admin@sruthi.com" 
+              required 
+              autocomplete="email"
+            >
+          </div>
+          <span class="form-error" id="emailError">Please enter a valid email or username.</span>
+        </div>
+
+        <!-- Password Field with Show/Hide Toggle -->
+        <div class="form-group">
+          <label class="form-label" for="loginPassword">
+            <span>Password</span>
+            <span class="required">*</span>
+          </label>
+          <div class="password-field-wrapper">
+            <input 
+              type="password" 
+              id="loginPassword" 
+              class="form-control" 
+              placeholder="Enter your secure password" 
+              required
+            >
+            <button type="button" class="password-toggle-btn" id="passwordToggleBtn" title="Show or hide password" aria-label="Toggle password visibility">
+              <i class="fa-solid fa-eye" id="passwordToggleIcon"></i>
+            </button>
+          </div>
+          <span class="form-error" id="passwordError">Password must be at least 4 characters long.</span>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary" id="loginSubmitBtn" style="width: 100%; padding: 0.8rem; margin-top: 0.5rem; font-size: 0.95rem;">
+          <span id="btnText"><i class="fa-solid fa-right-to-bracket"></i> Sign In to Dashboard</span>
+          <span id="btnLoading" style="display: none;"><i class="fa-solid fa-circle-notch fa-spin"></i> Authenticating...</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Shared Utility Scripts -->
+  <script src="/js/common.js"></script>
+  <script>
+    // Check if already authenticated
+    checkAuth(false);
+
+    // Show/Hide Password Toggle
+    const passwordInput = document.getElementById('loginPassword');
+    const toggleBtn = document.getElementById('passwordToggleBtn');
+    const toggleIcon = document.getElementById('passwordToggleIcon');
+
+    toggleBtn.addEventListener('click', () => {
+      const isPassword = passwordInput.getAttribute('type') === 'password';
+      passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+      toggleIcon.className = isPassword ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye';
+    });
+
+    // Auto-fill Demo Credentials
+    document.getElementById('autofillDemoBtn').addEventListener('click', () => {
+      document.getElementById('loginEmail').value = 'admin@sruthi.com';
+      document.getElementById('loginPassword').value = 'admin123';
+      showToast('Credentials Populated', 'Demo credentials applied. Click Sign In.', 'info');
+    });
+
+    // Handle Form Submit
+    const loginForm = document.getElementById('loginForm');
+    const submitBtn = document.getElementById('loginSubmitBtn');
+    const btnText = document.getElementById('btnText');
+    const btnLoading = document.getElementById('btnLoading');
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+
+      let valid = true;
+      if (!email) {
+        document.getElementById('emailError').style.display = 'block';
+        valid = false;
+      } else {
+        document.getElementById('emailError').style.display = 'none';
+      }
+
+      if (!password) {
+        document.getElementById('passwordError').style.display = 'block';
+        valid = false;
+      } else {
+        document.getElementById('passwordError').style.display = 'none';
+      }
+
+      if (!valid) return;
+
+      // Loading state
+      btnText.style.display = 'none';
+      btnLoading.style.display = 'inline-flex';
+      submitBtn.disabled = true;
+
+      try {
+        const response = await fetch(`${API_BASE}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          localStorage.setItem('sruthi_auth_token', data.token);
+          localStorage.setItem('sruthi_auth_user', JSON.stringify(data.user));
+          showToast('Welcome Back!', 'Login successful. Redirecting...', 'success');
+          setTimeout(() => {
+            window.location.href = '/pages/dashboard.html';
+          }, 600);
+        } else {
+          showToast('Authentication Failed', data.message || 'Invalid credentials. Please verify your email and password.', 'error');
+        }
+      } catch (err) {
+        showToast('Connection Error', 'Could not reach backend server. Please verify MySQL and Express are running.', 'error');
+      } finally {
+        btnText.style.display = 'inline-flex';
+        btnLoading.style.display = 'none';
+        submitBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

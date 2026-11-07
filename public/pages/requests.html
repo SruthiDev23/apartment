@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maintenance Requests | Sruthi Apartment Maintenance System</title>
+  
+  <!-- Google Fonts & Font Awesome 6 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- App Stylesheets -->
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/forms.css">
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- ================= Sidebar Navigation ================= -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="/pages/dashboard.html" class="brand-logo">
+          <div class="brand-icon-box">
+            <i class="fa-solid fa-building-shield"></i>
+          </div>
+          <div class="brand-text">
+            <span class="brand-title">Sruthi Apartment</span>
+            <span class="brand-subtitle">Maintenance System</span>
+          </div>
+        </a>
+        <button class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Close sidebar">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <nav class="sidebar-menu">
+        <span class="menu-category">Main Overview</span>
+        <a href="/pages/dashboard.html" class="nav-link">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>Dashboard</span>
+        </a>
+
+        <span class="menu-category">Facilities & People</span>
+        <a href="/pages/residents.html" class="nav-link">
+          <i class="fa-solid fa-users"></i>
+          <span>Residents</span>
+        </a>
+        <a href="/pages/staff.html" class="nav-link">
+          <i class="fa-solid fa-user-gear"></i>
+          <span>Maintenance Staff</span>
+        </a>
+
+        <span class="menu-category">Operations & Repairs</span>
+        <a href="/pages/requests.html" class="nav-link active">
+          <i class="fa-solid fa-clipboard-list"></i>
+          <span>Maintenance Requests</span>
+        </a>
+        <a href="/pages/records.html" class="nav-link">
+          <i class="fa-solid fa-screwdriver-wrench"></i>
+          <span>Maintenance Records</span>
+        </a>
+
+        <span class="menu-category">Analytics & Exports</span>
+        <a href="/pages/reports.html" class="nav-link">
+          <i class="fa-solid fa-chart-column"></i>
+          <span>Reports & Analytics</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-snippet">
+          <div class="user-avatar user-avatar-display">SA</div>
+          <div class="user-info">
+            <div class="user-name user-name-display">Administrator</div>
+            <div class="user-role user-role-display">Super Admin</div>
+          </div>
+          <button class="logout-icon-btn btn-logout-trigger" title="Sign Out">
+            <i class="fa-solid fa-power-off"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ================= Main Content Area ================= -->
+    <div class="main-wrapper">
+      <header class="top-navbar">
+        <div class="header-left">
+          <button class="mobile-toggle" id="mobileToggleBtn" aria-label="Open navigation menu">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="page-breadcrumb">
+            <h1 class="page-title">Maintenance Requests</h1>
+            <span class="page-subtitle">Track, assign, prioritize, and resolve apartment resident repair tickets</span>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <button class="btn btn-primary" id="openAddRequestModalBtn">
+            <i class="fa-solid fa-plus-circle"></i>
+            <span>Submit New Request</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="page-content">
+
+        <!-- Toolbar: Search & Multi-Filters -->
+        <section class="toolbar-container">
+          <div class="toolbar-left">
+            <div class="search-box">
+              <i class="fa-solid fa-magnifying-glass search-icon"></i>
+              <input 
+                type="text" 
+                id="searchRequestInput" 
+                class="search-input" 
+                placeholder="Search by ID, resident, flat no, description, or staff..."
+              >
+            </div>
+
+            <!-- Status Filter -->
+            <div style="display: flex; align-items: center; gap: 0.4rem;">
+              <label for="filterStatusSelect" style="font-size: 0.82rem; font-weight: 600; color: var(--navy-700);">Status:</label>
+              <select id="filterStatusSelect" class="filter-select">
+                <option value="All">All Statuses</option>
+                <option value="Pending">Pending</option>
+                <option value="Assigned">Assigned</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+                <option value="Rejected">Rejected</option>
+              </select>
+            </div>
+
+            <!-- Issue Type Filter -->
+            <div style="display: flex; align-items: center; gap: 0.4rem;">
+              <label for="filterIssueTypeSelect" style="font-size: 0.82rem; font-weight: 600; color: var(--navy-700);">Category:</label>
+              <select id="filterIssueTypeSelect" class="filter-select">
+                <option value="All">All Categories</option>
+                <option value="Plumbing">Plumbing</option>
+                <option value="Electrical">Electrical</option>
+                <option value="Cleaning">Cleaning</option>
+                <option value="Painting">Painting</option>
+                <option value="Lift Maintenance">Lift Maintenance</option>
+                <option value="Water Supply">Water Supply</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="toolbar-right">
+            <span class="badge-tag">
+              <i class="fa-solid fa-list-check"></i>
+              <span id="requestsCountBadge">0 Total Requests</span>
+            </span>
+          </div>
+        </section>
+
+        <!-- Requests Table Card -->
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">
+                <i class="fa-solid fa-clipboard-check"></i>
+                <span>All Maintenance Requests</span>
+              </h2>
+              <span class="card-subtitle">Real-time records from MySQL database table `Requests`</span>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="loadRequests()" title="Refresh requests">
+              <i class="fa-solid fa-arrows-rotate"></i>
+              <span>Refresh</span>
+            </button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Req ID</th>
+                  <th>Resident & Flat</th>
+                  <th>Issue Category</th>
+                  <th>Complaint Description</th>
+                  <th>Assigned Staff</th>
+                  <th>Request Date</th>
+                  <th>Status</th>
+                  <th style="text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="requestsTableBody">
+                <tr>
+                  <td colspan="8" class="empty-state">
+                    <i class="fa-solid fa-circle-notch fa-spin empty-icon" style="font-size: 1.8rem;"></i>
+                    <div class="empty-desc">Loading maintenance requests from database...</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination Bar -->
+          <div class="pagination-wrapper">
+            <div id="requestPaginationInfo">Showing 0 of 0 requests</div>
+            <div class="pagination-controls" id="requestPaginationControls"></div>
+          </div>
+        </section>
+
+      </main>
+
+      <footer class="app-footer">
+        <div>&copy; 2026 Sruthi Apartment Maintenance Request Management System.</div>
+        <div>Navy Blue & Teal Architecture</div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- ================= Modal: Submit / Edit Request ================= -->
+  <div class="modal-overlay" id="requestModalOverlay">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 class="modal-title" id="requestModalTitle">
+          <i class="fa-solid fa-plus-circle"></i>
+          <span>Submit Maintenance Request</span>
+        </h3>
+        <button type="button" class="modal-close" id="closeRequestModalBtn">&times;</button>
+      </div>
+      <form id="requestForm" novalidate>
+        <div class="modal-body">
+          <input type="hidden" id="requestIdField" value="">
+
+          <!-- Resident Dropdown Selection -->
+          <div class="form-group">
+            <label class="form-label" for="requestResidentSelect">
+              <span>Select Resident (Flat Number)</span>
+              <span class="required">*</span>
+            </label>
+            <select id="requestResidentSelect" class="form-control" required>
+              <option value="">-- Choose Resident --</option>
+            </select>
+            <span class="form-text">Choose the apartment resident reporting this repair issue.</span>
+          </div>
+
+          <!-- Issue Type Dropdown -->
+          <div class="form-group">
+            <label class="form-label" for="requestIssueTypeSelect">
+              <span>Issue Type (Category)</span>
+              <span class="required">*</span>
+            </label>
+            <select id="requestIssueTypeSelect" class="form-control" required>
+              <option value="">-- Choose Category --</option>
+              <option value="Plumbing">Plumbing</option>
+              <option value="Electrical">Electrical</option>
+              <option value="Cleaning">Cleaning</option>
+              <option value="Painting">Painting</option>
+              <option value="Lift Maintenance">Lift Maintenance</option>
+              <option value="Water Supply">Water Supply</option>
+              <option value="Other">Other Maintenance Issues</option>
+            </select>
+          </div>
+
+          <!-- Complaint Description -->
+          <div class="form-group">
+            <label class="form-label" for="requestDescriptionField">
+              <span>Detailed Description of Problem</span>
+              <span class="required">*</span>
+            </label>
+            <textarea 
+              id="requestDescriptionField" 
+              class="form-control" 
+              rows="3" 
+              placeholder="Describe the issue, specific location (e.g. kitchen sink, master bedroom balcony), and urgency..." 
+              required
+            ></textarea>
+          </div>
+
+          <div class="form-row">
+            <!-- Staff Assignment Dropdown -->
+            <div class="form-group">
+              <label class="form-label" for="requestStaffSelect">
+                <span>Assign Maintenance Staff</span>
+              </label>
+              <select id="requestStaffSelect" class="form-control">
+                <option value="">-- Leave Unassigned --</option>
+              </select>
+            </div>
+
+            <!-- Status Dropdown -->
+            <div class="form-group">
+              <label class="form-label" for="requestStatusSelect">
+                <span>Request Status</span>
+                <span class="required">*</span>
+              </label>
+              <select id="requestStatusSelect" class="form-control" required>
+                <option value="Pending">Pending</option>
+                <option value="Assigned">Assigned</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+                <option value="Rejected">Rejected</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancelRequestModalBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="saveRequestBtn">
+            <i class="fa-solid fa-floppy-disk"></i>
+            <span>Save Request</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= Modal: Quick Assign Staff ================= -->
+  <div class="modal-overlay" id="assignModalOverlay">
+    <div class="modal-container" style="max-width: 440px;">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <i class="fa-solid fa-user-check"></i>
+          <span>Assign Technician</span>
+        </h3>
+        <button type="button" class="modal-close" id="closeAssignModalBtn">&times;</button>
+      </div>
+      <form id="assignForm">
+        <div class="modal-body">
+          <input type="hidden" id="assignRequestIdField" value="">
+          <p style="font-size: 0.88rem; color: var(--navy-800); margin-bottom: 1rem;" id="assignRequestSummary">
+            Assigning technician for Request #...
+          </p>
+          <div class="form-group">
+            <label class="form-label" for="quickStaffSelect">
+              <span>Choose Maintenance Staff</span>
+              <span class="required">*</span>
+            </label>
+            <select id="quickStaffSelect" class="form-control" required>
+              <option value="">-- Select Staff --</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancelAssignBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary">
+            <i class="fa-solid fa-check"></i>
+            <span>Update Assignment</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= Modal: Quick Update Status ================= -->
+  <div class="modal-overlay" id="statusModalOverlay">
+    <div class="modal-container" style="max-width: 420px;">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <i class="fa-solid fa-clock-rotate-left"></i>
+          <span>Update Request Status</span>
+        </h3>
+        <button type="button" class="modal-close" id="closeStatusModalBtn">&times;</button>
+      </div>
+      <form id="statusForm">
+        <div class="modal-body">
+          <input type="hidden" id="statusRequestIdField" value="">
+          <p style="font-size: 0.88rem; color: var(--navy-800); margin-bottom: 1rem;" id="statusRequestSummary">
+            Updating status for Request #...
+          </p>
+          <div class="form-group">
+            <label class="form-label" for="quickStatusSelect">
+              <span>Select New Status</span>
+              <span class="required">*</span>
+            </label>
+            <select id="quickStatusSelect" class="form-control" required>
+              <option value="Pending">Pending</option>
+              <option value="Assigned">Assigned</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Completed">Completed</option>
+              <option value="Rejected">Rejected</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancelStatusBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary">
+            <i class="fa-solid fa-check"></i>
+            <span>Update Status</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= Modal: View Detailed Request Info & Linked Records ================= -->
+  <div class="modal-overlay" id="viewRequestModalOverlay">
+    <div class="modal-container" style="max-width: 680px;">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <i class="fa-solid fa-file-invoice"></i>
+          <span>Maintenance Ticket Details</span>
+        </h3>
+        <button type="button" class="modal-close" id="closeViewRequestModalBtn">&times;</button>
+      </div>
+      <div class="modal-body" id="viewRequestModalBody">
+        <!-- Dynamically injected -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="closeViewRequestBtn2">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shared Scripts -->
+  <script src="/js/common.js"></script>
+  <!-- Page Specific Script -->
+  <script src="/js/requests.js"></script>
+</body>
+</html>

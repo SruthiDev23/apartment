@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sruthi Apartment Maintenance Request Management System</title>
+  <script>
+    // Smooth redirect based on authentication
+    const token = localStorage.getItem('sruthi_auth_token');
+    if (token) {
+      window.location.replace('/pages/dashboard.html');
+    } else {
+      window.location.replace('/pages/login.html');
+    }
+  </script>
+</head>
+<body style="font-family: sans-serif; display:flex; align-items:center; justify-content:center; height:100vh; background:#0f172a; color:#fff;">
+  <p>Loading Sruthi Apartment Portal...</p>
+</body>
+</html>

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maintenance Staff | Sruthi Apartment Maintenance System</title>
+  
+  <!-- Google Fonts & Font Awesome 6 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- App Stylesheets -->
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/forms.css">
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- ================= Sidebar Navigation ================= -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="/pages/dashboard.html" class="brand-logo">
+          <div class="brand-icon-box">
+            <i class="fa-solid fa-building-shield"></i>
+          </div>
+          <div class="brand-text">
+            <span class="brand-title">Sruthi Apartment</span>
+            <span class="brand-subtitle">Maintenance System</span>
+          </div>
+        </a>
+        <button class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Close sidebar">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <nav class="sidebar-menu">
+        <span class="menu-category">Main Overview</span>
+        <a href="/pages/dashboard.html" class="nav-link">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>Dashboard</span>
+        </a>
+
+        <span class="menu-category">Facilities & People</span>
+        <a href="/pages/residents.html" class="nav-link">
+          <i class="fa-solid fa-users"></i>
+          <span>Residents</span>
+        </a>
+        <a href="/pages/staff.html" class="nav-link active">
+          <i class="fa-solid fa-user-gear"></i>
+          <span>Maintenance Staff</span>
+        </a>
+
+        <span class="menu-category">Operations & Repairs</span>
+        <a href="/pages/requests.html" class="nav-link">
+          <i class="fa-solid fa-clipboard-list"></i>
+          <span>Maintenance Requests</span>
+        </a>
+        <a href="/pages/records.html" class="nav-link">
+          <i class="fa-solid fa-screwdriver-wrench"></i>
+          <span>Maintenance Records</span>
+        </a>
+
+        <span class="menu-category">Analytics & Exports</span>
+        <a href="/pages/reports.html" class="nav-link">
+          <i class="fa-solid fa-chart-column"></i>
+          <span>Reports & Analytics</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-snippet">
+          <div class="user-avatar user-avatar-display">SA</div>
+          <div class="user-info">
+            <div class="user-name user-name-display">Administrator</div>
+            <div class="user-role user-role-display">Super Admin</div>
+          </div>
+          <button class="logout-icon-btn btn-logout-trigger" title="Sign Out">
+            <i class="fa-solid fa-power-off"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ================= Main Content Area ================= -->
+    <div class="main-wrapper">
+      <header class="top-navbar">
+        <div class="header-left">
+          <button class="mobile-toggle" id="mobileToggleBtn" aria-label="Open navigation menu">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="page-breadcrumb">
+            <h1 class="page-title">Maintenance Staff Management</h1>
+            <span class="page-subtitle">Technicians roster, specializations, contacts, and task allocation</span>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <button class="btn btn-primary" id="openAddStaffModalBtn">
+            <i class="fa-solid fa-user-plus"></i>
+            <span>Add Maintenance Staff</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="page-content">
+
+        <!-- Toolbar: Search & Specialization Filters -->
+        <section class="toolbar-container">
+          <div class="toolbar-left">
+            <div class="search-box">
+              <i class="fa-solid fa-magnifying-glass search-icon"></i>
+              <input 
+                type="text" 
+                id="searchStaffInput" 
+                class="search-input" 
+                placeholder="Search staff by name, phone, email, specialization..."
+              >
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <label for="filterSpecializationSelect" style="font-size: 0.82rem; font-weight: 600; color: var(--navy-700);">
+                Specialization:
+              </label>
+              <select id="filterSpecializationSelect" class="filter-select">
+                <option value="All">All Specializations</option>
+                <option value="Plumbing">Plumbing</option>
+                <option value="Electrical">Electrical</option>
+                <option value="Cleaning">Cleaning</option>
+                <option value="Painting">Painting</option>
+                <option value="Lift Maintenance">Lift Maintenance</option>
+                <option value="Water Supply">Water Supply</option>
+                <option value="Other">Other / General</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="toolbar-right">
+            <span class="badge-tag">
+              <i class="fa-solid fa-user-check"></i>
+              <span id="staffCountBadge">0 Staff Members</span>
+            </span>
+          </div>
+        </section>
+
+        <!-- Staff Table Card -->
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">
+                <i class="fa-solid fa-screwdriver-wrench"></i>
+                <span>Certified Maintenance Staff</span>
+              </h2>
+              <span class="card-subtitle">Real-time records from MySQL database table `Maintenance_staff`</span>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="loadStaff()" title="Refresh records">
+              <i class="fa-solid fa-arrows-rotate"></i>
+              <span>Refresh</span>
+            </button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Staff ID</th>
+                  <th>Staff Member</th>
+                  <th>Specialization</th>
+                  <th>Phone Number</th>
+                  <th>Work Email</th>
+                  <th>Assigned Tasks</th>
+                  <th style="text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="staffTableBody">
+                <tr>
+                  <td colspan="7" class="empty-state">
+                    <i class="fa-solid fa-circle-notch fa-spin empty-icon" style="font-size: 1.8rem;"></i>
+                    <div class="empty-desc">Loading maintenance staff from MySQL...</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination Bar -->
+          <div class="pagination-wrapper">
+            <div id="staffPaginationInfo">Showing 0 of 0 staff</div>
+            <div class="pagination-controls" id="staffPaginationControls"></div>
+          </div>
+        </section>
+
+      </main>
+
+      <footer class="app-footer">
+        <div>&copy; 2026 Sruthi Apartment Maintenance Request Management System.</div>
+        <div>Navy Blue & Teal Architecture</div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- ================= Modal: Add / Edit Staff ================= -->
+  <div class="modal-overlay" id="staffModalOverlay">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 class="modal-title" id="staffModalTitle">
+          <i class="fa-solid fa-user-gear"></i>
+          <span>Add Maintenance Staff</span>
+        </h3>
+        <button type="button" class="modal-close" id="closeStaffModalBtn">&times;</button>
+      </div>
+      <form id="staffForm" novalidate>
+        <div class="modal-body">
+          <input type="hidden" id="staffIdField" value="">
+
+          <div class="form-group">
+            <label class="form-label" for="staffNameField">
+              <span>Staff Full Name</span>
+              <span class="required">*</span>
+            </label>
+            <input 
+              type="text" 
+              id="staffNameField" 
+              class="form-control" 
+              placeholder="e.g. Ramesh Babu" 
+              required
+            >
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="staffSpecializationField">
+                <span>Specialization</span>
+                <span class="required">*</span>
+              </label>
+              <select id="staffSpecializationField" class="form-control" required>
+                <option value="">Select Specialization...</option>
+                <option value="Plumbing">Plumbing</option>
+                <option value="Electrical">Electrical</option>
+                <option value="Cleaning">Cleaning</option>
+                <option value="Painting">Painting</option>
+                <option value="Lift Maintenance">Lift Maintenance</option>
+                <option value="Water Supply">Water Supply</option>
+                <option value="Other">Other / General</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="staffPhoneField">
+                <span>Phone Number</span>
+                <span class="required">*</span>
+              </label>
+              <input 
+                type="tel" 
+                id="staffPhoneField" 
+                class="form-control" 
+                placeholder="e.g. 9811223344" 
+                required
+              >
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="staffEmailField">
+              <span>Work Email Address</span>
+              <span class="required">*</span>
+            </label>
+            <input 
+              type="email" 
+              id="staffEmailField" 
+              class="form-control" 
+              placeholder="e.g. ramesh.plumber@sruthi.com" 
+              required
+            >
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancelStaffModalBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="saveStaffBtn">
+            <i class="fa-solid fa-floppy-disk"></i>
+            <span>Save Staff Member</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= Modal: View Staff Profile & Assigned Tasks ================= -->
+  <div class="modal-overlay" id="viewStaffModalOverlay">
+    <div class="modal-container" style="max-width: 650px;">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <i class="fa-solid fa-id-badge"></i>
+          <span>Technician Profile & Assigned Requests</span>
+        </h3>
+        <button type="button" class="modal-close" id="closeViewStaffModalBtn">&times;</button>
+      </div>
+      <div class="modal-body" id="viewStaffModalBody">
+        <!-- Dynamically injected -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="closeViewStaffBtn2">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shared Scripts -->
+  <script src="/js/common.js"></script>
+  <!-- Page Specific Script -->
+  <script src="/js/staff.js"></script>
+</body>
+</html>

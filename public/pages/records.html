@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maintenance Records | Sruthi Apartment Maintenance System</title>
+  
+  <!-- Google Fonts & Font Awesome 6 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- App Stylesheets -->
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/forms.css">
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- ================= Sidebar Navigation ================= -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="/pages/dashboard.html" class="brand-logo">
+          <div class="brand-icon-box">
+            <i class="fa-solid fa-building-shield"></i>
+          </div>
+          <div class="brand-text">
+            <span class="brand-title">Sruthi Apartment</span>
+            <span class="brand-subtitle">Maintenance System</span>
+          </div>
+        </a>
+        <button class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Close sidebar">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <nav class="sidebar-menu">
+        <span class="menu-category">Main Overview</span>
+        <a href="/pages/dashboard.html" class="nav-link">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>Dashboard</span>
+        </a>
+
+        <span class="menu-category">Facilities & People</span>
+        <a href="/pages/residents.html" class="nav-link">
+          <i class="fa-solid fa-users"></i>
+          <span>Residents</span>
+        </a>
+        <a href="/pages/staff.html" class="nav-link">
+          <i class="fa-solid fa-user-gear"></i>
+          <span>Maintenance Staff</span>
+        </a>
+
+        <span class="menu-category">Operations & Repairs</span>
+        <a href="/pages/requests.html" class="nav-link">
+          <i class="fa-solid fa-clipboard-list"></i>
+          <span>Maintenance Requests</span>
+        </a>
+        <a href="/pages/records.html" class="nav-link active">
+          <i class="fa-solid fa-screwdriver-wrench"></i>
+          <span>Maintenance Records</span>
+        </a>
+
+        <span class="menu-category">Analytics & Exports</span>
+        <a href="/pages/reports.html" class="nav-link">
+          <i class="fa-solid fa-chart-column"></i>
+          <span>Reports & Analytics</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-snippet">
+          <div class="user-avatar user-avatar-display">SA</div>
+          <div class="user-info">
+            <div class="user-name user-name-display">Administrator</div>
+            <div class="user-role user-role-display">Super Admin</div>
+          </div>
+          <button class="logout-icon-btn btn-logout-trigger" title="Sign Out">
+            <i class="fa-solid fa-power-off"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ================= Main Content Area ================= -->
+    <div class="main-wrapper">
+      <header class="top-navbar">
+        <div class="header-left">
+          <button class="mobile-toggle" id="mobileToggleBtn" aria-label="Open navigation menu">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="page-breadcrumb">
+            <h1 class="page-title">Maintenance Records & Repair Costs</h1>
+            <span class="page-subtitle">Itemized work logs, completion dates, remarks, and expense auditing</span>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <button class="btn btn-primary" id="openAddRecordModalBtn">
+            <i class="fa-solid fa-file-invoice-dollar"></i>
+            <span>Add Maintenance Record</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="page-content">
+
+        <!-- Expense Summary Cards -->
+        <section class="stats-grid" style="margin-bottom: 1.5rem;">
+          <div class="stat-card emerald">
+            <div class="stat-details">
+              <span class="stat-label">Total Repair Expenditure</span>
+              <span class="stat-value" id="summaryTotalCost">₹0.00</span>
+              <span class="stat-subtext"><i class="fa-solid fa-receipt"></i> Cumulative facility cost</span>
+            </div>
+            <div class="stat-icon-wrap emerald">
+              <i class="fa-solid fa-indian-rupee-sign"></i>
+            </div>
+          </div>
+
+          <div class="stat-card navy">
+            <div class="stat-details">
+              <span class="stat-label">Total Repair Records</span>
+              <span class="stat-value" id="summaryTotalRecords">0</span>
+              <span class="stat-subtext"><i class="fa-solid fa-file-lines"></i> Logged service reports</span>
+            </div>
+            <div class="stat-icon-wrap navy">
+              <i class="fa-solid fa-clipboard-list"></i>
+            </div>
+          </div>
+
+          <div class="stat-card primary">
+            <div class="stat-details">
+              <span class="stat-label">Average Repair Cost</span>
+              <span class="stat-value" id="summaryAvgCost">₹0.00</span>
+              <span class="stat-subtext"><i class="fa-solid fa-chart-line"></i> Mean cost per repair job</span>
+            </div>
+            <div class="stat-icon-wrap primary">
+              <i class="fa-solid fa-calculator"></i>
+            </div>
+          </div>
+
+          <div class="stat-card purple">
+            <div class="stat-details">
+              <span class="stat-label">Highest Single Cost</span>
+              <span class="stat-value" id="summaryMaxCost">₹0.00</span>
+              <span class="stat-subtext"><i class="fa-solid fa-arrow-trend-up"></i> Major component repair</span>
+            </div>
+            <div class="stat-icon-wrap purple">
+              <i class="fa-solid fa-bolt-lightning"></i>
+            </div>
+          </div>
+        </section>
+
+        <!-- Search & Filter Toolbar -->
+        <section class="toolbar-container">
+          <div class="toolbar-left">
+            <div class="search-box">
+              <i class="fa-solid fa-magnifying-glass search-icon"></i>
+              <input 
+                type="text" 
+                id="searchRecordInput" 
+                class="search-input" 
+                placeholder="Search by description, remarks, resident name, flat no, or technician..."
+              >
+            </div>
+          </div>
+          <div class="toolbar-right">
+            <span class="badge-tag">
+              <i class="fa-solid fa-wrench"></i>
+              <span id="recordCountBadge">0 Records</span>
+            </span>
+          </div>
+        </section>
+
+        <!-- Records Table Card -->
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">
+                <i class="fa-solid fa-file-contract"></i>
+                <span>Completed Repair Ledger</span>
+              </h2>
+              <span class="card-subtitle">Real-time records from MySQL database table `Maintenance_record`</span>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="loadRecords()" title="Refresh records">
+              <i class="fa-solid fa-arrows-rotate"></i>
+              <span>Refresh</span>
+            </button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Record ID</th>
+                  <th>Request Link</th>
+                  <th>Resident & Flat</th>
+                  <th>Work Description</th>
+                  <th>Technician</th>
+                  <th>Completion Date</th>
+                  <th>Repair Cost</th>
+                  <th>Remarks</th>
+                  <th style="text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="recordsTableBody">
+                <tr>
+                  <td colspan="9" class="empty-state">
+                    <i class="fa-solid fa-circle-notch fa-spin empty-icon" style="font-size: 1.8rem;"></i>
+                    <div class="empty-desc">Loading maintenance records from MySQL...</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination Bar -->
+          <div class="pagination-wrapper">
+            <div id="recordPaginationInfo">Showing 0 of 0 records</div>
+            <div class="pagination-controls" id="recordPaginationControls"></div>
+          </div>
+        </section>
+
+      </main>
+
+      <footer class="app-footer">
+        <div>&copy; 2026 Sruthi Apartment Maintenance Request Management System.</div>
+        <div>Navy Blue & Teal Architecture</div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- ================= Modal: Add / Edit Maintenance Record ================= -->
+  <div class="modal-overlay" id="recordModalOverlay">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 class="modal-title" id="recordModalTitle">
+          <i class="fa-solid fa-file-invoice-dollar"></i>
+          <span>Add Maintenance Record</span>
+        </h3>
+        <button type="button" class="modal-close" id="closeRecordModalBtn">&times;</button>
+      </div>
+      <form id="recordForm" novalidate>
+        <div class="modal-body">
+          <input type="hidden" id="recordIdField" value="">
+
+          <!-- Select Linked Request -->
+          <div class="form-group">
+            <label class="form-label" for="recordRequestSelect">
+              <span>Select Maintenance Request</span>
+              <span class="required">*</span>
+            </label>
+            <select id="recordRequestSelect" class="form-control" required>
+              <option value="">-- Choose Active Request --</option>
+            </select>
+            <span class="form-text">Choose the ticket that this repair work was performed for.</span>
+          </div>
+
+          <!-- Work Description -->
+          <div class="form-group">
+            <label class="form-label" for="recordWorkDescription">
+              <span>Work Done Description</span>
+              <span class="required">*</span>
+            </label>
+            <textarea 
+              id="recordWorkDescription" 
+              class="form-control" 
+              rows="3" 
+              placeholder="Detail the repair performed, parts replaced, adjustments made..." 
+              required
+            ></textarea>
+          </div>
+
+          <div class="form-row">
+            <!-- Completion Date -->
+            <div class="form-group">
+              <label class="form-label" for="recordCompletionDate">
+                <span>Completion Date</span>
+                <span class="required">*</span>
+              </label>
+              <input 
+                type="date" 
+                id="recordCompletionDate" 
+                class="form-control" 
+                required
+              >
+            </div>
+
+            <!-- Repair Cost -->
+            <div class="form-group">
+              <label class="form-label" for="recordRepairCost">
+                <span>Repair Cost (₹)</span>
+                <span class="required">*</span>
+              </label>
+              <input 
+                type="number" 
+                id="recordRepairCost" 
+                class="form-control" 
+                step="0.01" 
+                min="0" 
+                placeholder="e.g. 850.00" 
+                required
+              >
+            </div>
+          </div>
+
+          <!-- Remarks -->
+          <div class="form-group">
+            <label class="form-label" for="recordRemarks">
+              <span>Technician Remarks / Notes</span>
+            </label>
+            <input 
+              type="text" 
+              id="recordRemarks" 
+              class="form-control" 
+              placeholder="e.g. Jaquar genuine valve installed. Tested for 15 mins."
+            >
+          </div>
+
+          <!-- Auto-complete request checkbox -->
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;">
+            <input type="checkbox" id="markCompletedCheck" checked style="accent-color: var(--teal-600); width: 16px; height: 16px; cursor: pointer;">
+            <label for="markCompletedCheck" style="font-size: 0.85rem; color: var(--navy-800); font-weight: 500; cursor: pointer;">
+              Automatically mark linked request status as <strong>"Completed"</strong>
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancelRecordModalBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="saveRecordBtn">
+            <i class="fa-solid fa-floppy-disk"></i>
+            <span>Save Record</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Shared Scripts -->
+  <script src="/js/common.js"></script>
+  <!-- Page Specific Script -->
+  <script src="/js/records.js"></script>
+</body>
+</html>
